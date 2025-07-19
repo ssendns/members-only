@@ -8,7 +8,7 @@
 
     <% if (currentUser && currentUser.is_member) { %>
     <small>
-      posted by <%= message.author.username %> on <%= new
+      posted by <%= message.author %> on <%= new
       Date(message.created_at).toLocaleString() %>
     </small>
     <% } %> <% if (currentUser && currentUser.is_admin) { %>
