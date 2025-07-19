@@ -1,7 +1,13 @@
 require("dotenv").config();
 const { Client } = require("pg");
+const bcrypt = require("bcryptjs");
 
-const SQL = `
+async function main() {
+  console.log("seeding...");
+
+  const hash = await bcrypt.hash("123", 10);
+
+  const SQL = `
     DROP TABLE IF EXISTS messages;
     DROP TABLE IF EXISTS users;
 
@@ -23,25 +29,24 @@ const SQL = `
 
     INSERT INTO users (username, password_hash, is_member, is_admin)
     VALUES 
-        ('alice@example.com', 'hashedpassword1', true, false),
-        ('bob@example.com', 'hashedpassword2', true, true),
-        ('guest@example.com', 'hashedpassword3', false, false);
+        ('alice', '${hash}', true, false),
+        ('bob', '${hash}', true, true),
+        ('guest', '${hash}', false, false);
 
     INSERT INTO messages (title, text, user_id)
     VALUES 
-        ('Hello World', 'This is my first message!', 1),
-        ('Admin Post', 'Only admins can see this.', 2),
-        ('Guest Entry', 'I am just a guest.', 3);
-`;
+        ('hellooo', 'this is my first message!', 1),
+        ('admin post', 'i am admin', 2);
+  `;
 
-async function main() {
-  console.log("seeding...");
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
   });
+
   await client.connect();
   await client.query(SQL);
   await client.end();
+
   console.log("done");
 }
 
